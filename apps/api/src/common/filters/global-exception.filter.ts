@@ -6,7 +6,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { DomainError, AppErrorCode } from '@mvp/shared';
+import { DomainError, AppErrorCode } from '@prospect/shared';
 import { ZodError } from 'zod';
 
 @Catch()

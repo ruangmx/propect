@@ -1,4 +1,4 @@
-import { ApiErrorResponse, ApiErrorResponseSchema } from '@mvp/shared';
+import { ApiErrorResponse, ApiErrorResponseSchema } from '@prospect/shared';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333';
 
