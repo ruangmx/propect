@@ -261,16 +261,16 @@ Ao clicar em "Enviar no WhatsApp", o sistema registra uma `Interacao` do tipo `M
 
 ### Fase 0: preparação
 
-- [ ] Rodar `/comecar` (ambiente, `.env`, banco, migrations, seed)
-- [ ] Rodar `/renomear-projeto` (nome: Prospect)
-- [ ] Rodar `/remover-exemplo` (remove a feature `tasks`)
+- [x] Rodar `/comecar` (ambiente, `.env`, banco, migrations, seed)
+- [x] Rodar `/renomear-projeto` (nome: Prospect)
+- [x] Rodar `/remover-exemplo` (remove a feature `tasks`)
 - [ ] Criar projeto no Google Cloud, ativar Places API (New), gerar chave restrita e configurar cota diária
 - [ ] Em paralelo: prospectar 10 negócios manualmente (não esperar o sistema ficar pronto)
 
 ### Fase 1: coleta e funil (dias 1 a 4)
 
 - [ ] Models `Regiao`, `Busca`, `Lead`, `Interacao` + migration + seed das regiões
-- [ ] Schemas Zod em `@mvp/shared` (lead, filtros, status, transição de status)
+- [ ] Schemas Zod em `@prospect/shared` (lead, filtros, status, transição de status)
 - [ ] Funções puras `classificar` e `ehCelular` com testes
 - [ ] `GooglePlacesClient` isolado + `BuscaService` (busca, classifica, deduplica por `placeId`, salva)
 - [ ] Endpoint `POST /buscas` (nicho + regiões) e `GET /leads` com filtros (status, nicho, região, presença web) e paginação
