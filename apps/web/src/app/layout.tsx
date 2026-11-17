@@ -1,7 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Layers, CheckSquare } from 'lucide-react';
+import { Layers } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Prospect | Sistema de Prospecção',
@@ -25,11 +25,7 @@ export default function RootLayout({
               </Link>
               <nav className="flex items-center gap-4 text-sm font-medium text-zinc-400">
                 <Link href="/" className="hover:text-white transition">
-                  Início
-                </Link>
-                <Link href="/tasks" className="flex items-center gap-1.5 hover:text-white transition">
-                  <CheckSquare className="h-4 w-4 text-blue-400" />
-                  <span>Tarefas (Molde)</span>
+                  Painel
                 </Link>
               </nav>
             </div>
