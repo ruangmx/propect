@@ -1,8 +1,8 @@
-# Universal Agentic MVP Template
+# Prospect — Sistema de Prospecção
 
-> Um ponto de partida enxuto e de engenharia sólida para construir **qualquer MVP em produção** usando linguagem natural — projetado para funcionar nativamente tanto no **Google Antigravity (`agy`)** quanto no **Claude Code (`claude`)**.
+> Sistema inteligente de busca, qualificação e prospecção de negócios locais sem presença web, com funil de vendas semi-automático via WhatsApp e demos personalizadas.
 
-Você descreve o que o sistema precisa fazer em português; o agente constrói seguindo contratos compartilhados em Zod, camadas isoladas no Backend e Frontend, economia de tokens (*Progressive Disclosure*) e travas automáticas de qualidade e segurança.
+Construído com base no Universal Agentic MVP Template (Next.js 15, NestJS 11, Prisma 7, PostgreSQL, Tailwind v4 e Zod compartilhado).
 
 O template já vem com uma funcionalidade molde — **Tarefas (`tasks`)** — funcionando de ponta a ponta (contrato Zod, banco PostgreSQL via Prisma, API NestJS, tela Next.js com os 4 estados visuais e testes no Vitest). Quando você for começar o seu domínio real, basta pedir ao agente: `/remover-exemplo` e `/renomear-projeto`.
 

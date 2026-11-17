@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { Layers, CheckSquare } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'MVP Universal Template',
-  description: 'Template de MVP de Alta Performance com Next.js, NestJS e Prisma',
+  title: 'Prospect | Sistema de Prospecção',
+  description: 'Prospecção e qualificação inteligente de clientes para sites e sistemas web',
 };
 
 export default function RootLayout({
@@ -21,7 +21,7 @@ export default function RootLayout({
             <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
               <Link href="/" className="flex items-center gap-2 font-bold text-lg text-white hover:opacity-80 transition">
                 <Layers className="h-6 w-6 text-blue-500" />
-                <span>MVP Template 2.0</span>
+                <span>Prospect</span>
               </Link>
               <nav className="flex items-center gap-4 text-sm font-medium text-zinc-400">
                 <Link href="/" className="hover:text-white transition">
@@ -36,7 +36,7 @@ export default function RootLayout({
           </header>
           <main className="flex-1">{children}</main>
           <footer className="border-t border-zinc-800 py-6 text-center text-xs text-zinc-500">
-            Universal Agentic Monorepo • Antigravity + Claude Code
+            Prospect • Sistema de Prospecção
           </footer>
         </div>
       </body>

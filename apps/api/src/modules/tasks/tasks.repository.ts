@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service.js';
 import { Prisma } from '@prisma/client';
-import { PaginationQuery, PaginatedResponse, Task } from '@mvp/shared';
+import { PaginationQuery, PaginatedResponse, Task } from '@prospect/shared';
 
 function toDomain(row: {
   id: string;

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { TaskStatus, TaskStatusEnum } from '@mvp/shared';
+import { TaskStatus, TaskStatusEnum } from '@prospect/shared';
 import { Plus, Trash2, CheckCircle, Clock, AlertTriangle, RefreshCw } from 'lucide-react';
 
 export default function TasksPage() {

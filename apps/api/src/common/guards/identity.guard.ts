@@ -30,7 +30,7 @@ export class IdentityGuard implements CanActivate {
     // Extrai dos headers ou injeta a identidade mock de desenvolvimento
     const user: UserIdentity = {
       id: request.headers['x-user-id'] || '00000000-0000-0000-0000-000000000001',
-      email: request.headers['x-user-email'] || 'dev@mvp.local',
+      email: request.headers['x-user-email'] || 'dev@prospect.local',
       name: request.headers['x-user-name'] || 'Desenvolvedor MVP',
       role: request.headers['x-user-role'] || 'admin',
     };

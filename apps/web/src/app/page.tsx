@@ -31,7 +31,7 @@ export default function HomePage() {
         <Card>
           <CardHeader>
             <ShieldCheck className="h-8 w-8 text-emerald-400 mb-2" />
-            <CardTitle>Contrato Único (@mvp/shared)</CardTitle>
+            <CardTitle>Contrato Único (@prospect/shared)</CardTitle>
             <CardDescription>
               Os mesmos Schemas Zod e regras puras de domínio compartilhadas entre Next.js e NestJS sem duplicar código.
             </CardDescription>

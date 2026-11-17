@@ -19,8 +19,8 @@ async function bootstrap() {
 
   // Swagger Documentation em /docs
   const config = new DocumentBuilder()
-    .setTitle('MVP API')
-    .setDescription('Documentação OpenAPI do Backend NestJS do MVP Template')
+    .setTitle('Prospect API')
+    .setDescription('Documentação OpenAPI do Backend NestJS do Prospect')
     .setVersion('1.0.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);

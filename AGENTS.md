@@ -62,3 +62,8 @@ pnpm agents:sync         # Sincroniza subagentes de .agents/agents para .claude/
 - **PROIBIDO** fazer commit ou push direto nas branches `main` ou `develop` (trabalhe sempre em `feature/<nome>` ou `fix/<nome>`).
 - **PROIBIDO** colocar chamadas de banco de dados no Controller da API ou chamadas `fetch`/regras de negócio direto dentro do JSX no Frontend.
 
+---
+
+Antes de qualquer tarefa, leia `docs/PLANO.md`. Ele é a fonte da verdade do projeto.
+
+

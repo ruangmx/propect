@@ -23,7 +23,7 @@ import {
   UpdateTaskInput,
   UpdateTaskStatusSchema,
   UpdateTaskStatusInput,
-} from '@mvp/shared';
+} from '@prospect/shared';
 
 @Controller('tasks')
 @UseGuards(IdentityGuard)

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TasksService } from './tasks.service.js';
 import { TasksRepository } from './tasks.repository.js';
 import { EventsService } from '../../events/events.service.js';
-import { TaskStatusEnum, TaskPriorityEnum, DomainError } from '@mvp/shared';
+import { TaskStatusEnum, TaskPriorityEnum, DomainError } from '@prospect/shared';
 
 describe('TasksService', () => {
   let service: TasksService;

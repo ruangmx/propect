@@ -6,7 +6,7 @@ import {
   Task,
   TaskStatus,
   UpdateTaskInput,
-} from '@mvp/shared';
+} from '@prospect/shared';
 
 export const tasksApi = {
   async list(query: PaginationQuery = { page: 1, limit: 10, sortOrder: 'desc' }) {

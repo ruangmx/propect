@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Task, TaskStatus, TaskPriority, CreateTaskInput } from '@mvp/shared';
+import { Task, TaskStatus, TaskPriority, CreateTaskInput } from '@prospect/shared';
 import { tasksApi } from '@/lib/api/tasks.api';
 
 export type UiState = 'loading' | 'empty' | 'error' | 'success';

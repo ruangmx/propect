@@ -9,7 +9,7 @@ import {
   TaskStatus,
   UpdateTaskInput,
   validateTaskStatusTransition,
-} from '@mvp/shared';
+} from '@prospect/shared';
 
 @Injectable()
 export class TasksService {
