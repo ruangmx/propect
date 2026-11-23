@@ -7,11 +7,13 @@ import {
   RegistrarEnvioWhatsappInput,
   UpdateLeadStatusInput,
   assertLeadStatusTransition,
+  buildDemoUrl,
   calcularProximoContato,
   extrairDigitosTelefone,
   gerarLinkWhatsapp,
   gerarMensagemWhatsapp,
 } from '@prospect/shared';
+import { EnvService } from '../../common/env/env.service.js';
 import { EventsService } from '../../events/events.service.js';
 import { LeadsRepository } from './leads.repository.js';
 
@@ -19,6 +21,7 @@ import { LeadsRepository } from './leads.repository.js';
 export class LeadsService {
   constructor(
     private readonly repository: LeadsRepository,
+    private readonly envService: EnvService,
     private readonly eventsService: EventsService
   ) {}
 
@@ -73,11 +76,16 @@ export class LeadsService {
       );
     }
 
+    const linkDemo = lead.slug
+      ? buildDemoUrl(this.envService.get('DEMO_BASE_URL'), lead.slug)
+      : undefined;
+
     const mensagem =
       input.mensagem?.trim() ||
       gerarMensagemWhatsapp({
         nome: lead.nome,
         bairro: lead.regiao?.nome,
+        linkDemo,
       });
 
     const whatsappUrl = gerarLinkWhatsapp(lead.telefone, mensagem);

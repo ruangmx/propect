@@ -36,7 +36,7 @@ export class LeadsRepository {
     const [items, total] = await this.prisma.$transaction([
       this.prisma.lead.findMany({
         where,
-        include: { regiao: true },
+        include: { regiao: true, demo: true },
         orderBy: [{ createdAt: 'desc' }],
         skip,
         take: query.limit,
@@ -58,6 +58,7 @@ export class LeadsRepository {
       where: { id, deletedAt: null },
       include: {
         regiao: true,
+        demo: true,
         interacoes: {
           where: { deletedAt: null },
           orderBy: { createdAt: 'desc' },

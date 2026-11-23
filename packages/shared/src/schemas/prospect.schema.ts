@@ -33,6 +33,80 @@ export const TipoInteracaoEnum = z.enum([
 ]);
 export type TipoInteracao = z.infer<typeof TipoInteracaoEnum>;
 
+export const DemoTemplateEnum = z.enum(['barbearia', 'hamburgueria']);
+export type DemoTemplate = z.infer<typeof DemoTemplateEnum>;
+
+export const DemoServicoSchema = z.object({
+  nome: z.string().trim().min(1).max(120),
+  descricao: z.string().trim().min(1).max(300),
+  preco: z.string().trim().max(40).optional(),
+});
+export type DemoServico = z.infer<typeof DemoServicoSchema>;
+
+export const DemoDadosSchema = z.object({
+  titulo: z.string().trim().min(2).max(140),
+  subtitulo: z.string().trim().min(2).max(240),
+  descricao: z.string().trim().min(10).max(1200),
+  servicos: z.array(DemoServicoSchema).min(1).max(8),
+  diferenciais: z.array(z.string().trim().min(2).max(120)).min(1).max(6),
+  chamadaAcao: z.string().trim().min(2).max(100),
+  horarioFuncionamento: z.string().trim().min(2).max(140),
+  corPrimaria: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Cor primária deve ser hexadecimal (#RRGGBB).'),
+  corDestaque: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Cor de destaque deve ser hexadecimal (#RRGGBB).'),
+});
+export type DemoDados = z.infer<typeof DemoDadosSchema>;
+
+export const DemoSchema = z.object({
+  id: z.string().uuid(),
+  leadId: z.string().uuid(),
+  template: DemoTemplateEnum,
+  dados: DemoDadosSchema,
+  logoUrl: z.string().nullable(),
+  publicadaEm: z.coerce.date().nullable(),
+  visualizacoes: z.number().int().nonnegative(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+});
+export type Demo = z.infer<typeof DemoSchema>;
+
+export const GenerateDemoInputSchema = z.object({
+  template: DemoTemplateEnum.optional(),
+});
+export type GenerateDemoInput = z.infer<typeof GenerateDemoInputSchema>;
+
+export const UpdateDemoSchema = z.object({
+  template: DemoTemplateEnum.optional(),
+  dados: DemoDadosSchema.optional(),
+  logoUrl: z
+    .string()
+    .trim()
+    .url('Informe uma URL válida para a logo.')
+    .refine((val) => val.startsWith('https://'), 'A URL da logo deve usar HTTPS.')
+    .nullable()
+    .optional(),
+});
+export type UpdateDemoInput = z.infer<typeof UpdateDemoSchema>;
+
+export const PublicDemoResponseSchema = z.object({
+  slug: z.string(),
+  template: DemoTemplateEnum,
+  dados: DemoDadosSchema,
+  logoUrl: z.string().nullable(),
+  visualizacoes: z.number().int().nonnegative(),
+  negocio: z.object({
+    nome: z.string(),
+    nicho: z.string(),
+    endereco: z.string().nullable(),
+    bairro: z.string().nullable(),
+    telefone: z.string().nullable(),
+    googleMapsUri: z.string().nullable(),
+    instagram: z.string().nullable(),
+    nota: z.number().nullable(),
+    totalAvaliacoes: z.number().int().nullable(),
+  }),
+});
+export type PublicDemoResponse = z.infer<typeof PublicDemoResponseSchema>;
+
 export const NICHOS_SUGERIDOS = [
   'barbearia',
   'hamburgueria',
@@ -143,6 +217,7 @@ export const LeadSchema = z.object({
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   interacoes: z.array(InteracaoSchema).optional(),
+  demo: DemoSchema.nullable().optional(),
 });
 export type Lead = z.infer<typeof LeadSchema>;
 
