@@ -283,7 +283,7 @@ Ao clicar em "Enviar no WhatsApp", o sistema registra uma `Interacao` do tipo `M
 
 ### Fase 2: demos (dias 5 a 10)
 
-- [ ] Model `Demo` + migration
+- [x] Model `Demo` + migration
 - [ ] Rota pública `/demo/[slug]` no Next.js, com template de **barbearia** e de **hamburgueria** (começar só com esses dois)
 - [ ] Geração de textos com a API do Claude (`ANTHROPIC_API_KEY`): título, descrição, lista de serviços, chamada para ação, sempre em português natural
 - [ ] Paleta de cores por nicho; campo de logo opcional para preencher manualmente
