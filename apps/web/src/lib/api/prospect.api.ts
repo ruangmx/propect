@@ -3,13 +3,17 @@ import {
   CreateBuscaInput,
   CreateBuscaResult,
   CreateInteracaoInput,
+  Demo,
+  GenerateDemoInput,
   Interacao,
   Lead,
   LeadFilterQuery,
   PaginatedResponse,
+  PublicDemoResponse,
   Regiao,
   RegistrarEnvioWhatsappInput,
   RegistrarEnvioWhatsappResult,
+  UpdateDemoInput,
   UpdateLeadStatusInput,
 } from '@prospect/shared';
 import { apiClient } from '../api-client';
@@ -96,4 +100,37 @@ export async function adicionarInteracaoLead(
     },
     body: JSON.stringify(input),
   });
+}
+
+export async function gerarDemoLead(
+  leadId: string,
+  input: GenerateDemoInput = {}
+): Promise<{ demo: Demo; lead: Lead; demoUrl: string; geradoPorIa: boolean }> {
+  return apiClient<{ demo: Demo; lead: Lead; demoUrl: string; geradoPorIa: boolean }>(
+    `/leads/${leadId}/demo`,
+    {
+      method: 'POST',
+      headers: {
+        'Idempotency-Key': createIdempotencyKey(),
+      },
+      body: JSON.stringify(input),
+    }
+  );
+}
+
+export async function atualizarDemo(
+  demoId: string,
+  input: UpdateDemoInput
+): Promise<Demo> {
+  return apiClient<Demo>(`/demos/${demoId}`, {
+    method: 'PATCH',
+    headers: {
+      'Idempotency-Key': createIdempotencyKey(),
+    },
+    body: JSON.stringify(input),
+  });
+}
+
+export async function obterDemoPublica(slug: string): Promise<PublicDemoResponse> {
+  return apiClient<PublicDemoResponse>(`/demos/public/${encodeURIComponent(slug)}`);
 }

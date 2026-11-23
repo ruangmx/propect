@@ -2,18 +2,22 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  DemoTemplate,
   Lead,
   LeadStatus,
   PresencaWeb,
   Regiao,
   TipoInteracao,
+  UpdateDemoInput,
 } from '@prospect/shared';
 import { ApiClientError } from '@/lib/api-client';
 import {
   adicionarInteracaoLead,
+  atualizarDemo,
   atualizarStatusLead,
   buscarLeadPorId,
   enviarWhatsappLead,
+  gerarDemoLead,
   listarLeads,
   listarRegioes,
 } from '@/lib/api/prospect.api';
@@ -50,6 +54,7 @@ export function useLeadsVm() {
   const [mostrarArquivados, setMostrarArquivados] = useState(false);
 
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [previewLead, setPreviewLead] = useState<Lead | null>(null);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
 
   const carregarLeads = useCallback(async () => {
@@ -193,6 +198,82 @@ export function useLeadsVm() {
     []
   );
 
+  const gerarDemo = useCallback(async (leadId: string, template?: DemoTemplate) => {
+    setActionError(null);
+    setBusyLeadId(leadId);
+    try {
+      const result = await gerarDemoLead(leadId, template ? { template } : {});
+      setLeads((prev) =>
+        prev.map((item) => (item.id === leadId ? result.lead : item))
+      );
+      setSelectedLead((prev) => (prev?.id === leadId ? result.lead : prev));
+      setPreviewLead(result.lead);
+    } catch (err) {
+      const message =
+        err instanceof ApiClientError
+          ? err.message
+          : 'Não foi possível gerar a demo para este lead.';
+      setActionError(message);
+    } finally {
+      setBusyLeadId(null);
+    }
+  }, []);
+
+  const abrirPreviewDemo = useCallback(async (leadId: string) => {
+    const local = leads.find((l) => l.id === leadId);
+    if (local?.demo) {
+      setPreviewLead(local);
+      return;
+    }
+    setIsLoadingDetail(true);
+    try {
+      const detalhe = await buscarLeadPorId(leadId);
+      setPreviewLead(detalhe);
+    } catch (err) {
+      const message =
+        err instanceof ApiClientError
+          ? err.message
+          : 'Não foi possível carregar a pré-visualização da demo.';
+      setActionError(message);
+    } finally {
+      setIsLoadingDetail(false);
+    }
+  }, [leads]);
+
+  const fecharPreviewDemo = useCallback(() => {
+    setPreviewLead(null);
+  }, []);
+
+  const salvarEdicaoDemo = useCallback(
+    async (demoId: string, leadId: string, input: UpdateDemoInput) => {
+      setActionError(null);
+      setBusyLeadId(leadId);
+      try {
+        const updatedDemo = await atualizarDemo(demoId, input);
+        setLeads((prev) =>
+          prev.map((item) =>
+            item.id === leadId ? { ...item, demo: updatedDemo } : item
+          )
+        );
+        setPreviewLead((prev) =>
+          prev?.id === leadId ? { ...prev, demo: updatedDemo } : prev
+        );
+        setSelectedLead((prev) =>
+          prev?.id === leadId ? { ...prev, demo: updatedDemo } : prev
+        );
+      } catch (err) {
+        const message =
+          err instanceof ApiClientError
+            ? err.message
+            : 'Não foi possível salvar as alterações da demo.';
+        setActionError(message);
+      } finally {
+        setBusyLeadId(null);
+      }
+    },
+    []
+  );
+
   return {
     leads,
     regioes,
@@ -221,5 +302,10 @@ export function useLeadsVm() {
     abrirDetalhes,
     fecharDetalhes,
     registrarInteracao,
+    previewLead,
+    gerarDemo,
+    abrirPreviewDemo,
+    fecharPreviewDemo,
+    salvarEdicaoDemo,
   };
 }
