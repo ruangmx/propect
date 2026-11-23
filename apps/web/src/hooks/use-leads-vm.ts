@@ -118,6 +118,7 @@ export function useLeadsVm() {
         prev.map((item) => (item.id === leadId ? result.lead : item))
       );
       setSelectedLead((prev) => (prev?.id === leadId ? result.lead : prev));
+      setPreviewLead((prev) => (prev?.id === leadId ? result.lead : prev));
       window.open(result.whatsappUrl, '_blank', 'noopener,noreferrer');
     } catch (err) {
       const message =
@@ -143,6 +144,7 @@ export function useLeadsVm() {
           prev.map((item) => (item.id === leadId ? updated : item))
         );
         setSelectedLead((prev) => (prev?.id === leadId ? updated : prev));
+        setPreviewLead((prev) => (prev?.id === leadId ? updated : prev));
       } catch (err) {
         const message =
           err instanceof ApiClientError

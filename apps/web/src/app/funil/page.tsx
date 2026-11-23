@@ -225,6 +225,7 @@ export default function FunilPage() {
         <DemoPreviewModal
           lead={vm.previewLead}
           isBusy={vm.busyLeadId === vm.previewLead.id || vm.isLoadingDetail}
+          errorMessage={vm.actionError}
           onClose={vm.fecharPreviewDemo}
           onSave={(demoId, leadId, input) => void vm.salvarEdicaoDemo(demoId, leadId, input)}
           onRegenerate={(leadId, template) => void vm.gerarDemo(leadId, template)}

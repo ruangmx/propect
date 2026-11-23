@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { PublicDemoResponse } from '@prospect/shared';
+import { AppErrorCode, PublicDemoResponse } from '@prospect/shared';
 import { ApiClientError } from '@/lib/api-client';
 import { obterDemoPublica } from '@/lib/api/prospect.api';
 
@@ -19,7 +19,10 @@ export function usePublicDemoVm(slug: string) {
       const data = await obterDemoPublica(slug);
       setDemo(data);
     } catch (err) {
-      if (err instanceof ApiClientError && err.status === 404) {
+      if (
+        err instanceof ApiClientError &&
+        (err.status === 404 || err.code === AppErrorCode.NOT_FOUND)
+      ) {
         setNotFound(true);
       } else {
         setError(

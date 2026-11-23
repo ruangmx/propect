@@ -6,10 +6,12 @@ import {
   DemoTemplate,
   Lead,
   UpdateDemoInput,
+  UpdateDemoSchema,
   canTransitionLeadStatus,
   obterPaletaPorTemplate,
 } from '@prospect/shared';
 import {
+  AlertCircle,
   ExternalLink,
   Eye,
   MessageCircle,
@@ -23,6 +25,7 @@ import { Input } from '@/components/ui/input';
 interface DemoPreviewModalProps {
   lead: Lead;
   isBusy: boolean;
+  errorMessage?: string | null;
   onClose: () => void;
   onSave: (demoId: string, leadId: string, input: UpdateDemoInput) => void;
   onRegenerate: (leadId: string, template: DemoTemplate) => void;
@@ -32,6 +35,7 @@ interface DemoPreviewModalProps {
 export function DemoPreviewModal({
   lead,
   isBusy,
+  errorMessage,
   onClose,
   onSave,
   onRegenerate,
@@ -48,6 +52,7 @@ export function DemoPreviewModal({
   const [logoUrl, setLogoUrl] = useState(demo?.logoUrl ?? '');
   const [corPrimaria, setCorPrimaria] = useState(demo?.dados.corPrimaria ?? '#111827');
   const [corDestaque, setCorDestaque] = useState(demo?.dados.corDestaque ?? '#d97706');
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!demo) return;
@@ -60,6 +65,7 @@ export function DemoPreviewModal({
     setLogoUrl(demo.logoUrl ?? '');
     setCorPrimaria(demo.dados.corPrimaria);
     setCorDestaque(demo.dados.corDestaque);
+    setValidationError(null);
   }, [demo]);
 
   if (!demo) return null;
@@ -69,6 +75,8 @@ export function DemoPreviewModal({
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationError(null);
+
     const dadosAtualizados: DemoDados = {
       ...demo.dados,
       titulo: titulo.trim(),
@@ -80,11 +88,21 @@ export function DemoPreviewModal({
       corDestaque,
     };
 
-    onSave(demo.id, lead.id, {
+    const payload: UpdateDemoInput = {
       template,
       dados: dadosAtualizados,
       logoUrl: logoUrl.trim() ? logoUrl.trim() : null,
-    });
+    };
+
+    const parsed = UpdateDemoSchema.safeParse(payload);
+    if (!parsed.success) {
+      setValidationError(
+        parsed.error.issues[0]?.message ?? 'Verifique os campos preenchidos antes de salvar.'
+      );
+      return;
+    }
+
+    onSave(demo.id, lead.id, parsed.data);
   };
 
   return (
@@ -154,6 +172,12 @@ export function DemoPreviewModal({
         </div>
 
         <form onSubmit={handleSave} className="space-y-4">
+          {(validationError || errorMessage) && (
+            <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-xs text-red-300">
+              <AlertCircle className="h-4 w-4 shrink-0" />
+              <span>{validationError || errorMessage}</span>
+            </div>
+          )}
           <div className="grid sm:grid-cols-3 gap-3">
             <div>
               <label htmlFor="demo-template" className="block text-xs font-medium text-zinc-400 mb-1">
