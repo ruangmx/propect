@@ -272,8 +272,8 @@ Ao clicar em "Enviar no WhatsApp", o sistema registra uma `Interacao` do tipo `M
 - [x] Models `Regiao`, `Busca`, `Lead`, `Interacao` + migration + seed das regiões
 - [x] Schemas Zod em `@prospect/shared` (lead, filtros, status, transição de status)
 - [x] Funções puras `classificar` e `ehCelular` com testes
-- [ ] `GooglePlacesClient` isolado + `BuscaService` (busca, classifica, deduplica por `placeId`, salva)
-- [ ] Endpoint `POST /buscas` (nicho + regiões) e `GET /leads` com filtros (status, nicho, região, presença web) e paginação
+- [x] `GooglePlacesClient` isolado + `BuscaService` (busca, classifica, deduplica por `placeId`, salva)
+- [x] Endpoint `POST /buscas` (nicho + regiões) e `GET /leads` com filtros (status, nicho, região, presença web) e paginação
 - [ ] Tela de nova busca (nichos em chips, seleção de regiões, botão buscar, resumo do resultado)
 - [ ] Tela de funil em kanban por status, com card do lead (nome, bairro, nota, presença web, botões WhatsApp e Maps)
 - [ ] Botão "Enviar no WhatsApp" que gera o link `wa.me`, registra a interação e muda o status

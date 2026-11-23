@@ -3,9 +3,16 @@ import { z } from 'zod';
 export const EnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().default(3333),
-  DATABASE_URL: z.string().url(),
-  JWT_SECRET: z.string().min(16).default('dev-insecure-jwt-secret-replace-in-production-min-32-chars'),
+  DATABASE_URL: z
+    .string()
+    .url()
+    .default('postgresql://postgres:postgres@localhost:5432/prospect_dev'),
+  JWT_SECRET: z
+    .string()
+    .min(16)
+    .default('dev-insecure-jwt-secret-replace-in-production-min-32-chars'),
   CORS_ORIGIN: z.string().default('http://localhost:3000'),
+  GOOGLE_PLACES_KEY: z.string().optional(),
 });
 
 export type EnvConfig = z.infer<typeof EnvSchema>;
@@ -19,4 +26,3 @@ export function validateEnv(): EnvConfig {
   }
   return result.data;
 }
-
