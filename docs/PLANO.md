@@ -274,10 +274,10 @@ Ao clicar em "Enviar no WhatsApp", o sistema registra uma `Interacao` do tipo `M
 - [x] Funções puras `classificar` e `ehCelular` com testes
 - [x] `GooglePlacesClient` isolado + `BuscaService` (busca, classifica, deduplica por `placeId`, salva)
 - [x] Endpoint `POST /buscas` (nicho + regiões) e `GET /leads` com filtros (status, nicho, região, presença web) e paginação
-- [ ] Tela de nova busca (nichos em chips, seleção de regiões, botão buscar, resumo do resultado)
-- [ ] Tela de funil em kanban por status, com card do lead (nome, bairro, nota, presença web, botões WhatsApp e Maps)
-- [ ] Botão "Enviar no WhatsApp" que gera o link `wa.me`, registra a interação e muda o status
-- [ ] Mudança manual de status com registro em `Interacao`
+- [x] Tela de nova busca (nichos em chips, seleção de regiões, botão buscar, resumo do resultado)
+- [x] Tela de funil em kanban por status, com card do lead (nome, bairro, nota, presença web, botões WhatsApp e Maps)
+- [x] Botão "Enviar no WhatsApp" que gera o link `wa.me`, registra a interação e muda o status
+- [x] Mudança manual de status com registro em `Interacao`
 
 **Pronto quando:** consigo buscar "barbearia" em 3 regiões, ver só quem não tem site, e mover leads pelo funil com histórico.
 

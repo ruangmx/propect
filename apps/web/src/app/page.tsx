@@ -1,4 +1,13 @@
-import { Search, MessageSquare, Globe, Sparkles, Building2, TrendingUp } from 'lucide-react';
+import Link from 'next/link';
+import {
+  Search,
+  MessageSquare,
+  Globe,
+  Sparkles,
+  ArrowRight,
+  Kanban,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 
 export default function HomePage() {
@@ -10,11 +19,26 @@ export default function HomePage() {
           Prospecção Inteligente B2B
         </div>
         <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white">
-          Prospect — Prospecção Ativa de Clientes
+          Prospect: Prospecção Ativa de Clientes
         </h1>
         <p className="mx-auto max-w-2xl text-lg text-zinc-400">
-          Localize pequenos negócios sem presença web, gere demonstrações personalizadas em segundos e conduza o funil pelo WhatsApp.
+          Localize pequenos negócios sem presença web em Brasília, conduza o funil comercial e envie abordagens personalizadas pelo WhatsApp.
         </p>
+        <div className="flex flex-wrap justify-center gap-3 pt-4">
+          <Link href="/busca">
+            <Button size="lg" className="gap-2">
+              <Search className="h-4 w-4" />
+              Nova Busca no Google Places
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </Link>
+          <Link href="/funil">
+            <Button size="lg" variant="outline" className="gap-2">
+              <Kanban className="h-4 w-4" />
+              Abrir Funil de Leads
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="grid sm:grid-cols-3 gap-6">
@@ -27,53 +51,36 @@ export default function HomePage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="text-xs text-zinc-500">
-            Busca paginada por nicho e regiões de Brasília com validação de celular para WhatsApp.
-          </CardContent>
-        </Card>
-
-        <Card className="border-zinc-800 bg-zinc-900/60">
-          <CardHeader>
-            <Globe className="h-8 w-8 text-emerald-400 mb-2" />
-            <CardTitle>2. Demos por Nicho</CardTitle>
-            <CardDescription>
-              Criação rápida de páginas de demonstração interativas em rotas públicas para apresentar ao lead.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="text-xs text-zinc-500">
-            Templates customizados para barbearias, hamburguerias e pequenos negócios locais.
+            Busca paginada por nicho e 14 regiões de Brasília com validação de celular para WhatsApp.
           </CardContent>
         </Card>
 
         <Card className="border-zinc-800 bg-zinc-900/60">
           <CardHeader>
             <MessageSquare className="h-8 w-8 text-purple-400 mb-2" />
-            <CardTitle>3. Funil no WhatsApp</CardTitle>
+            <CardTitle>2. Funil no WhatsApp</CardTitle>
             <CardDescription>
-              Disparo semi-automático seguro com link wa.me direto para seu WhatsApp Business.
+              Disparo semi-automático seguro com link wa.me direto para seu WhatsApp Business e registro automático da interação.
             </CardDescription>
           </CardHeader>
           <CardContent className="text-xs text-zinc-500">
-            Lembretes de follow-up (D+3 e D+7) sem risco de bloqueio de número.
+            Agendamento automático de retorno em D+3 sem risco de bloqueio do número.
           </CardContent>
         </Card>
-      </div>
 
-      <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
-        <div className="space-y-1 text-center sm:text-left">
-          <h2 className="text-lg font-semibold text-white flex items-center gap-2 justify-center sm:justify-start">
-            <Building2 className="h-5 w-5 text-blue-400" />
-            Fase 0 Concluída: Template Pronto
-          </h2>
-          <p className="text-sm text-zinc-400">
-            O ambiente está configurado e pronto para a implementação da Fase 1 (Coleta e Funil de Vendas).
-          </p>
-        </div>
-        <div className="flex items-center gap-2 text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg">
-          <TrendingUp className="h-4 w-4" />
-          Fase 1 Pronta para Início
-        </div>
+        <Card className="border-zinc-800 bg-zinc-900/60">
+          <CardHeader>
+            <Globe className="h-8 w-8 text-emerald-400 mb-2" />
+            <CardTitle>3. Demos por Nicho (Fase 2)</CardTitle>
+            <CardDescription>
+              Em seguida: páginas de demonstração interativas em rotas públicas para apresentar ao lead antes mesmo de fechar.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-xs text-zinc-500">
+            Templates customizados para barbearias, hamburguerias e pequenos negócios locais.
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
 }
-
