@@ -39,12 +39,32 @@ export function extrairDigitosTelefone(tel?: string | null): string {
 }
 
 /**
- * Extrai a URL do Instagram caso o websiteUri aponte para o Instagram.
+ * Valida que uma URL externa usa estritamente protocolo https: (previne XSS via javascript:/data:).
+ */
+export function sanitizeHttpsUrl(url?: string | null): string | null {
+  if (!url) return null;
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+  try {
+    const parsed = new URL(trimmed);
+    if (parsed.protocol !== 'https:') return null;
+    return parsed.toString();
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Extrai a URL segura do Instagram caso o websiteUri aponte para instagram.com em HTTPS.
  */
 export function extrairInstagram(websiteUri?: string | null): string | null {
-  if (!websiteUri) return null;
-  if (!/instagram\.com/i.test(websiteUri)) return null;
-  return websiteUri.trim();
+  const safeUrl = sanitizeHttpsUrl(websiteUri);
+  if (!safeUrl) return null;
+  const hostname = new URL(safeUrl).hostname.toLowerCase();
+  if (hostname === 'instagram.com' || hostname.endsWith('.instagram.com')) {
+    return safeUrl;
+  }
+  return null;
 }
 
 export interface MensagemWhatsappParams {

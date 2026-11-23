@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { AppErrorCode, CreateBuscaSchema, DomainError } from '@prospect/shared';
 import { IdempotencyInterceptor } from '../../common/interceptors/idempotency.interceptor.js';
 import { BuscasService } from './buscas.service.js';
@@ -16,6 +17,7 @@ export class BuscasController {
   }
 
   @Post()
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @UseInterceptors(IdempotencyInterceptor)
   @ApiOperation({
     summary: 'Executa uma nova busca de leads por nicho e regiões no Google Places API (New)',

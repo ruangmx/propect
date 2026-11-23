@@ -64,6 +64,8 @@ export class LeadsService {
   async registrarEnvioWhatsapp(id: string, input: RegistrarEnvioWhatsappInput) {
     const lead = await this.buscarPorId(id);
 
+    assertLeadStatusTransition(lead.status, 'ENVIADO');
+
     if (!lead.telefone || extrairDigitosTelefone(lead.telefone).length < 10) {
       throw new DomainError(
         'Este lead não possui um número de telefone válido para WhatsApp.',

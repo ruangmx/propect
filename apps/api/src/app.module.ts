@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { EnvModule } from './common/env/env.module.js';
+import { IdentityGuard } from './common/guards/identity.guard.js';
 import { PrismaModule } from './common/prisma/prisma.module.js';
 import { EventsModule } from './events/events.module.js';
 import { HealthModule } from './health/health.module.js';
@@ -23,6 +25,16 @@ import { RegioesModule } from './modules/regioes/regioes.module.js';
     RegioesModule,
     BuscasModule,
     LeadsModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: IdentityGuard,
+    },
   ],
 })
 export class AppModule {}

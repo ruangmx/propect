@@ -9,6 +9,7 @@ import {
   extrairInstagram,
   gerarLinkWhatsapp,
   gerarMensagemWhatsapp,
+  sanitizeHttpsUrl,
 } from './prospect.domain.js';
 
 describe('Domínio Prospect — Classificação e Qualificação de Leads', () => {
@@ -127,13 +128,26 @@ describe('Domínio Prospect — Classificação e Qualificação de Leads', () =
     });
   });
 
-  describe('extrairInstagram() e calcularProximoContato()', () => {
-    it('extrai URL do Instagram apenas quando for do domínio instagram.com', () => {
+  describe('extrairInstagram(), sanitizeHttpsUrl() e calcularProximoContato()', () => {
+    it('extrai URL do Instagram apenas quando for HTTPS do domínio instagram.com', () => {
       expect(extrairInstagram('https://instagram.com/barbearia')).toBe(
         'https://instagram.com/barbearia'
       );
+      expect(extrairInstagram('https://www.instagram.com/barbearia')).toBe(
+        'https://www.instagram.com/barbearia'
+      );
+      expect(extrairInstagram('javascript:alert(1)//instagram.com')).toBeNull();
+      expect(extrairInstagram('http://instagram.com/barbearia')).toBeNull();
       expect(extrairInstagram('https://meusite.com.br')).toBeNull();
       expect(extrairInstagram(null)).toBeNull();
+    });
+
+    it('bloqueia esquemas não HTTPS em sanitizeHttpsUrl', () => {
+      expect(sanitizeHttpsUrl('https://maps.google.com/?cid=123')).toBe(
+        'https://maps.google.com/?cid=123'
+      );
+      expect(sanitizeHttpsUrl('javascript:alert(1)')).toBeNull();
+      expect(sanitizeHttpsUrl('data:text/html,<script>alert(1)</script>')).toBeNull();
     });
 
     it('calcula D+3 em UTC corretamente', () => {

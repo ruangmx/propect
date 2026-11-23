@@ -46,12 +46,10 @@ export class LeadsRepository {
 
     return {
       items,
-      meta: {
-        total,
-        page: query.page,
-        limit: query.limit,
-        totalPages: Math.max(1, Math.ceil(total / query.limit)),
-      },
+      total,
+      page: query.page,
+      limit: query.limit,
+      totalPages: Math.max(1, Math.ceil(total / query.limit)),
     };
   }
 
@@ -77,7 +75,15 @@ export class LeadsRepository {
     conteudoInteracao: string;
   }) {
     return this.prisma.$transaction(async (tx) => {
-      const updated = await tx.lead.update({
+      await tx.interacao.create({
+        data: {
+          leadId: params.id,
+          tipo: 'MUDANCA_STATUS',
+          conteudo: params.conteudoInteracao,
+        },
+      });
+
+      return tx.lead.update({
         where: { id: params.id },
         data: {
           status: params.novoStatus,
@@ -92,16 +98,6 @@ export class LeadsRepository {
           },
         },
       });
-
-      await tx.interacao.create({
-        data: {
-          leadId: params.id,
-          tipo: 'MUDANCA_STATUS',
-          conteudo: params.conteudoInteracao,
-        },
-      });
-
-      return updated;
     });
   }
 

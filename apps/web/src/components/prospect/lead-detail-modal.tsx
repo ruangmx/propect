@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Lead,
   LeadStatus,
   LEAD_ALLOWED_TRANSITIONS,
   TipoInteracao,
+  canTransitionLeadStatus,
+  sanitizeHttpsUrl,
 } from '@prospect/shared';
 import {
   ExternalLink,
@@ -64,8 +66,16 @@ export function LeadDetailModal({
   const [tipoInteracao, setTipoInteracao] = useState<TipoInteracao>('NOTA');
   const [conteudoInteracao, setConteudoInteracao] = useState('');
 
+  useEffect(() => {
+    setNovoStatus(lead.status);
+    setMotivoPerda(lead.motivoPerda ?? '');
+  }, [lead.id, lead.status, lead.motivoPerda]);
+
   const transicoes = LEAD_ALLOWED_TRANSITIONS[lead.status] ?? [];
   const precisaMotivo = novoStatus === 'PERDIDO' || novoStatus === 'DESCARTADO';
+  const podeEnviarWhatsapp = Boolean(lead.telefone) && canTransitionLeadStatus(lead.status, 'ENVIADO');
+  const mapsUrl = sanitizeHttpsUrl(lead.googleMapsUri);
+  const instagramUrl = sanitizeHttpsUrl(lead.instagram);
 
   return (
     <div
@@ -110,16 +120,16 @@ export function LeadDetailModal({
           <Button
             type="button"
             size="sm"
-            disabled={isBusy || !lead.telefone}
+            disabled={isBusy || !podeEnviarWhatsapp}
             onClick={() => onSendWhatsapp(lead.id)}
             className="gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white"
           >
             <MessageCircle className="h-4 w-4" />
             Enviar no WhatsApp
           </Button>
-          {lead.googleMapsUri && (
+          {mapsUrl && (
             <a
-              href={lead.googleMapsUri}
+              href={mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-zinc-700 px-3 text-xs font-medium text-zinc-200 hover:bg-zinc-800 transition"
@@ -128,9 +138,9 @@ export function LeadDetailModal({
               Abrir no Maps
             </a>
           )}
-          {lead.instagram && (
+          {instagramUrl && (
             <a
-              href={lead.instagram}
+              href={instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-zinc-700 px-3 text-xs font-medium text-zinc-200 hover:bg-zinc-800 transition"

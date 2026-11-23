@@ -92,6 +92,7 @@ export class GooglePlacesClient {
       }
 
       let response: Response;
+      let data: GooglePlacesApiResponse;
       try {
         response = await fetch(PLACES_SEARCH_TEXT_URL, {
           method: 'POST',
@@ -103,10 +104,11 @@ export class GooglePlacesClient {
           body: JSON.stringify(body),
           signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
         });
+        data = (await response.json()) as GooglePlacesApiResponse;
       } catch (error) {
         const message =
           error instanceof Error ? error.message : 'Erro de comunicação com Google Places API';
-        this.logger.warn(`Falha de rede/timeout ao consultar Google Places: ${message}`);
+        this.logger.warn(`Falha de rede/timeout/parse ao consultar Google Places: ${message}`);
 
         // Se já coletamos resultados nas páginas anteriores, retornamos o que foi obtido sem derrubar a busca
         if (places.length > 0) {
@@ -114,12 +116,9 @@ export class GooglePlacesClient {
         }
         throw new DomainError(
           'Não foi possível consultar a Google Places API no momento. Tente novamente em instantes.',
-          AppErrorCode.INTERNAL_SERVER_ERROR,
-          { reason: message }
+          AppErrorCode.INTERNAL_SERVER_ERROR
         );
       }
-
-      const data = (await response.json()) as GooglePlacesApiResponse;
 
       if (!response.ok || data.error) {
         const apiMsg = data.error?.message || `HTTP ${response.status}`;
@@ -129,9 +128,9 @@ export class GooglePlacesClient {
           break;
         }
         throw new DomainError(
-          `Erro retornado pela Google Places API: ${apiMsg}`,
+          'A Google Places API recusou a consulta. Verifique a chave ou a cota configurada.',
           AppErrorCode.BAD_REQUEST,
-          { status: response.status, googleStatus: data.error?.status }
+          { status: response.status }
         );
       }
 

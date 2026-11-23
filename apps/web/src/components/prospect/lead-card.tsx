@@ -4,6 +4,8 @@ import {
   Lead,
   LeadStatus,
   LEAD_ALLOWED_TRANSITIONS,
+  canTransitionLeadStatus,
+  sanitizeHttpsUrl,
 } from '@prospect/shared';
 import {
   ExternalLink,
@@ -52,6 +54,8 @@ export function LeadCard({
 }: LeadCardProps) {
   const presenca = PRESENCA_BADGE[lead.presencaWeb];
   const proximosStatus = LEAD_ALLOWED_TRANSITIONS[lead.status] ?? [];
+  const podeEnviarWhatsapp = Boolean(lead.telefone) && canTransitionLeadStatus(lead.status, 'ENVIADO');
+  const mapsUrl = sanitizeHttpsUrl(lead.googleMapsUri);
 
   return (
     <article className="rounded-xl border border-zinc-800 bg-zinc-900/90 p-3.5 shadow-sm transition hover:border-zinc-700 space-y-3">
@@ -107,7 +111,7 @@ export function LeadCard({
         <Button
           type="button"
           size="sm"
-          disabled={isBusy || !lead.telefone}
+          disabled={isBusy || !podeEnviarWhatsapp}
           onClick={() => onSendWhatsapp(lead.id)}
           className="flex-1 gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white"
         >
@@ -115,9 +119,9 @@ export function LeadCard({
           WhatsApp
         </Button>
 
-        {lead.googleMapsUri && (
+        {mapsUrl && (
           <a
-            href={lead.googleMapsUri}
+            href={mapsUrl}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`Abrir ${lead.nome} no Google Maps`}

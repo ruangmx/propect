@@ -126,4 +126,12 @@ describe('LeadsService', () => {
       DomainError
     );
   });
+
+  it('bloqueia envio de WhatsApp para lead DESCARTADO (LGPD)', async () => {
+    const { service } = createService({ status: 'DESCARTADO' });
+
+    await expect(service.registrarEnvioWhatsapp(baseLead.id, {})).rejects.toBeInstanceOf(
+      DomainError
+    );
+  });
 });
