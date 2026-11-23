@@ -96,11 +96,11 @@ describe('DemosService', () => {
     const result = await service.gerarParaLead('d0000000-0000-4000-8000-000000000001', {});
 
     expect(result.lead.status).toBe('DEMO_PRONTA');
-    expect(result.lead.slug).toBe('barbearia-dom-pedro');
-    expect(result.demoUrl).toBe('http://localhost:3000/demo/barbearia-dom-pedro');
+    expect(result.lead.slug).toMatch(/^barbearia-dom-pedro-d0000000$/);
+    expect(result.demoUrl).toBe(`http://localhost:3000/demo/${result.lead.slug}`);
     expect(eventsService.publish).toHaveBeenCalledWith(
       'demos.gerada',
-      expect.objectContaining({ slug: 'barbearia-dom-pedro' })
+      expect.objectContaining({ slug: 'barbearia-dom-pedro-d0000000' })
     );
   });
 
@@ -118,8 +118,8 @@ describe('DemosService', () => {
     const pub = await service.obterPublicaPorSlug('barbearia-dom-pedro');
 
     expect(pub.slug).toBe('barbearia-dom-pedro');
-    expect(pub.visualizacoes).toBe(3);
     expect(pub.logoUrl).toBe('https://cdn.exemplo.com/logo.png');
     expect(pub.negocio.nome).toBe('Barbearia Dom Pedro');
+    expect(pub).not.toHaveProperty('visualizacoes');
   });
 });

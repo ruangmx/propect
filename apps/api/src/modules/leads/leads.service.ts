@@ -93,6 +93,7 @@ export class LeadsService {
 
     const updated = await this.repository.recordWhatsappSent({
       id: lead.id,
+      statusAnterior: lead.status,
       proximoContatoEm,
       mensagem,
     });

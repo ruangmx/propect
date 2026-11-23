@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { DemoDados, DemoTemplate } from '@prospect/shared';
+import { LeadStatus, Prisma } from '@prisma/client';
+import { AppErrorCode, DemoDados, DemoTemplate, DomainError } from '@prospect/shared';
 import { PrismaService } from '../../common/prisma/prisma.service.js';
 
 @Injectable()
@@ -44,9 +44,21 @@ export class DemosRepository {
     slug: string;
     template: DemoTemplate;
     dados: DemoDados;
-    statusAnterior: string;
+    statusAnterior: LeadStatus;
   }) {
     return this.prisma.$transaction(async (tx) => {
+      // Escrita condicional primeiro: se o lead foi descartado em paralelo, nada é gravado (evita TOCTOU).
+      const { count } = await tx.lead.updateMany({
+        where: { id: params.leadId, status: params.statusAnterior, deletedAt: null },
+        data: { slug: params.slug, status: 'DEMO_PRONTA' },
+      });
+      if (count === 0) {
+        throw new DomainError(
+          'O status do lead mudou durante a operação. Atualize a tela e tente novamente.',
+          AppErrorCode.CONFLICT
+        );
+      }
+
       const demo = await tx.demo.upsert({
         where: { leadId: params.leadId },
         create: {
@@ -73,12 +85,8 @@ export class DemosRepository {
         });
       }
 
-      const lead = await tx.lead.update({
+      const lead = await tx.lead.findUniqueOrThrow({
         where: { id: params.leadId },
-        data: {
-          slug: params.slug,
-          status: 'DEMO_PRONTA',
-        },
         include: {
           regiao: true,
           demo: true,
@@ -119,15 +127,35 @@ export class DemosRepository {
         where: {
           slug,
           deletedAt: null,
+          // LGPD: lead descartado (não quer contato) nunca mantém a demo pública.
+          status: { not: 'DESCARTADO' },
           demo: {
             is: {
               deletedAt: null,
             },
           },
         },
-        include: {
-          regiao: true,
-          demo: true,
+        select: {
+          slug: true,
+          nome: true,
+          nicho: true,
+          endereco: true,
+          telefone: true,
+          googleMapsUri: true,
+          instagram: true,
+          nota: true,
+          totalAvaliacoes: true,
+          regiao: {
+            select: { nome: true },
+          },
+          demo: {
+            select: {
+              id: true,
+              template: true,
+              dados: true,
+              logoUrl: true,
+            },
+          },
         },
       });
 

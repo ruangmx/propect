@@ -69,6 +69,13 @@ export const DemoSchema = z.object({
 });
 export type Demo = z.infer<typeof DemoSchema>;
 
+export const DemoSlugSchema = z
+  .string()
+  .trim()
+  .min(2)
+  .max(80)
+  .regex(/^[a-z0-9-]+$/, 'Slug inválido.');
+
 export const GenerateDemoInputSchema = z.object({
   template: DemoTemplateEnum.optional(),
 });
@@ -92,7 +99,6 @@ export const PublicDemoResponseSchema = z.object({
   template: DemoTemplateEnum,
   dados: DemoDadosSchema,
   logoUrl: z.string().nullable(),
-  visualizacoes: z.number().int().nonnegative(),
   negocio: z.object({
     nome: z.string(),
     nicho: z.string(),

@@ -9,8 +9,10 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import {
   AppErrorCode,
+  DemoSlugSchema,
   DomainError,
   GenerateDemoInputSchema,
   UpdateDemoSchema,
@@ -24,6 +26,7 @@ export class DemosController {
   constructor(private readonly demosService: DemosService) {}
 
   @Post('leads/:id/demo')
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   @UseInterceptors(IdempotencyInterceptor)
   @ApiOperation({
     summary: 'Gera a página de demonstração do lead com textos de nicho e move status para DEMO_PRONTA',
@@ -58,10 +61,15 @@ export class DemosController {
   }
 
   @Get('demos/public/:slug')
+  @Throttle({ default: { limit: 30, ttl: 60000 } })
   @ApiOperation({
     summary: 'Retorna os dados públicos da demo por slug e incrementa o contador de visualizações',
   })
   async obterPublica(@Param('slug') slug: string) {
-    return this.demosService.obterPublicaPorSlug(slug);
+    const parsed = DemoSlugSchema.safeParse(slug);
+    if (!parsed.success) {
+      throw new DomainError('Slug inválido.', AppErrorCode.BAD_REQUEST);
+    }
+    return this.demosService.obterPublicaPorSlug(parsed.data);
   }
 }

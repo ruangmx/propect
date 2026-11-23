@@ -87,16 +87,19 @@ export class DemosService {
     }
 
     const { lead, demo } = result;
-    const dadosParsed = DemoDadosSchema.parse(demo.dados);
+    const dadosParsed = DemoDadosSchema.safeParse(demo.dados);
+    if (!dadosParsed.success) {
+      // Conteúdo salvo corrompido: nunca vaza detalhes do schema na rota pública.
+      throw new DomainError('Demonstração indisponível.', AppErrorCode.NOT_FOUND);
+    }
     const template: DemoTemplate =
       demo.template === 'hamburgueria' ? 'hamburgueria' : 'barbearia';
 
     return {
       slug: lead.slug ?? slug,
       template,
-      dados: dadosParsed,
+      dados: dadosParsed.data,
       logoUrl: sanitizeHttpsUrl(demo.logoUrl),
-      visualizacoes: demo.visualizacoes,
       negocio: {
         nome: lead.nome,
         nicho: lead.nicho,
@@ -118,10 +121,11 @@ export class DemosService {
   ): Promise<string> {
     if (slugAtual) return slugAtual;
 
-    const base = gerarSlugDemo(nome);
-    const existsBase = await this.repository.slugExists(base, leadId);
-    if (!existsBase) return base;
-
-    return gerarSlugDemo(nome, leadId.slice(0, 6));
+    // Sufixo derivado do id do lead: o slug não é adivinhável só pelo nome do negócio.
+    const comSufixo = gerarSlugDemo(nome, leadId.replace(/-/g, '').slice(0, 8));
+    if (await this.repository.slugExists(comSufixo, leadId)) {
+      throw new DomainError('Não foi possível gerar um endereço único para a demo.', AppErrorCode.CONFLICT);
+    }
+    return comSufixo;
   }
 }
