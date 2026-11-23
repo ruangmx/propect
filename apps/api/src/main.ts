@@ -1,8 +1,14 @@
+import { config as loadEnv } from 'dotenv';
+import { resolve } from 'node:path';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter.js';
 import { validateEnv } from './common/env/env.schema.js';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
+// Carrega variáveis da raiz do monorepo e de apps/api (sobrescrevendo se houver)
+loadEnv({ path: resolve(process.cwd(), '../../.env') });
+loadEnv({ path: resolve(process.cwd(), '.env'), override: true });
 
 async function bootstrap() {
   const env = validateEnv();

@@ -5,3 +5,131 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum LeadStatus {
+  NOVO
+  LIGAR
+  DEMO_PRONTA
+  ENVIADO
+  RESPONDEU
+  REUNIAO
+  FECHOU
+  PERDIDO
+  SEM_RESPOSTA
+  DESCARTADO
+
+  @@map("lead_status")
+}
+
+enum PresencaWeb {
+  SEM_SITE
+  SO_REDE_SOCIAL
+  TEM_SITE
+
+  @@map("presenca_web")
+}
+
+enum TipoInteracao {
+  MENSAGEM_ENVIADA
+  FOLLOW_UP
+  RESPOSTA
+  LIGACAO
+  REUNIAO
+  MUDANCA_STATUS
+  NOTA
+
+  @@map("tipo_interacao")
+}
+
+model Regiao {
+  id         String    @id @default(uuid()) @db.Uuid
+  nome       String    @db.VarChar(100)
+  cidade     String    @db.VarChar(100)
+  uf         String    @db.VarChar(2)
+  lat        Float
+  lng        Float
+  raioMetros Int       @default(4000) @map("raio_metros")
+  ativa      Boolean   @default(true)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt  DateTime? @map("deleted_at") @db.Timestamptz
+  leads      Lead[]
+  buscas     Busca[]
+
+  @@unique([nome, cidade, uf])
+  @@index([ativa])
+  @@index([deletedAt])
+  @@map("regioes")
+}
+
+model Busca {
+  id              String    @id @default(uuid()) @db.Uuid
+  nicho           String    @db.VarChar(100)
+  regiaoId        String    @map("regiao_id") @db.Uuid
+  regiao          Regiao    @relation(fields: [regiaoId], references: [id])
+  totalEncontrado Int       @map("total_encontrado")
+  totalNovos      Int       @map("total_novos")
+  chamadasApi     Int       @map("chamadas_api")
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt       DateTime? @map("deleted_at") @db.Timestamptz
+
+  @@index([regiaoId])
+  @@index([nicho])
+  @@index([createdAt])
+  @@index([deletedAt])
+  @@map("buscas")
+}
+
+model Lead {
+  id               String      @id @default(uuid()) @db.Uuid
+  placeId          String      @unique @map("place_id") @db.VarChar(255)
+  nome             String      @db.VarChar(255)
+  nicho            String      @db.VarChar(100)
+  endereco         String?
+  regiaoId         String?     @map("regiao_id") @db.Uuid
+  regiao           Regiao?     @relation(fields: [regiaoId], references: [id])
+  telefone         String?     @db.VarChar(50)
+  ehCelular        Boolean     @default(false) @map("eh_celular")
+  website          String?
+  instagram        String?
+  presencaWeb      PresencaWeb @map("presenca_web")
+  nota             Float?
+  totalAvaliacoes  Int?        @map("total_avaliacoes")
+  googleMapsUri    String?     @map("google_maps_uri")
+  status           LeadStatus  @default(NOVO)
+  slug             String?     @unique @db.VarChar(255)
+  proximoContatoEm DateTime?   @map("proximo_contato_em") @db.Timestamptz
+  motivoPerda      String?     @map("motivo_perda")
+  observacoes      String?
+  createdAt        DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime    @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt        DateTime?   @map("deleted_at") @db.Timestamptz
+  interacoes       Interacao[]
+
+  @@index([status])
+  @@index([nicho])
+  @@index([regiaoId])
+  @@index([presencaWeb])
+  @@index([proximoContatoEm])
+  @@index([createdAt])
+  @@index([deletedAt])
+  @@map("leads")
+}
+
+model Interacao {
+  id        String        @id @default(uuid()) @db.Uuid
+  leadId    String        @map("lead_id") @db.Uuid
+  lead      Lead          @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  tipo      TipoInteracao
+  conteudo  String?
+  createdAt DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt DateTime?     @map("deleted_at") @db.Timestamptz
+
+  @@index([leadId])
+  @@index([tipo])
+  @@index([createdAt])
+  @@index([deletedAt])
+  @@map("interacoes")
+}

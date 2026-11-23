@@ -27,6 +27,12 @@ export default function RootLayout({
                 <Link href="/" className="hover:text-white transition">
                   Painel
                 </Link>
+                <Link href="/busca" className="hover:text-white transition">
+                  Nova Busca
+                </Link>
+                <Link href="/funil" className="hover:text-white transition">
+                  Funil
+                </Link>
               </nav>
             </div>
           </header>
