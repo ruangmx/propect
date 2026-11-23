@@ -269,7 +269,7 @@ Ao clicar em "Enviar no WhatsApp", o sistema registra uma `Interacao` do tipo `M
 
 ### Fase 1: coleta e funil (dias 1 a 4)
 
-- [ ] Models `Regiao`, `Busca`, `Lead`, `Interacao` + migration + seed das regiões
+- [x] Models `Regiao`, `Busca`, `Lead`, `Interacao` + migration + seed das regiões
 - [ ] Schemas Zod em `@prospect/shared` (lead, filtros, status, transição de status)
 - [ ] Funções puras `classificar` e `ehCelular` com testes
 - [ ] `GooglePlacesClient` isolado + `BuscaService` (busca, classifica, deduplica por `placeId`, salva)
