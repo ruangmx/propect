@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { LeadStatus, Prisma, TipoInteracao } from '@prisma/client';
-import { LeadFilterQuery } from '@prospect/shared';
+import { AppErrorCode, DomainError, LeadFilterQuery } from '@prospect/shared';
 import { PrismaService } from '../../common/prisma/prisma.service.js';
 
 @Injectable()
@@ -36,7 +36,7 @@ export class LeadsRepository {
     const [items, total] = await this.prisma.$transaction([
       this.prisma.lead.findMany({
         where,
-        include: { regiao: true },
+        include: { regiao: true, demo: true },
         orderBy: [{ createdAt: 'desc' }],
         skip,
         take: query.limit,
@@ -58,6 +58,7 @@ export class LeadsRepository {
       where: { id, deletedAt: null },
       include: {
         regiao: true,
+        demo: true,
         interacoes: {
           where: { deletedAt: null },
           orderBy: { createdAt: 'desc' },
@@ -75,6 +76,22 @@ export class LeadsRepository {
     conteudoInteracao: string;
   }) {
     return this.prisma.$transaction(async (tx) => {
+      // Escrita condicional: só altera se o status ainda for o que o service validou (evita TOCTOU).
+      const { count } = await tx.lead.updateMany({
+        where: { id: params.id, status: params.statusAnterior, deletedAt: null },
+        data: {
+          status: params.novoStatus,
+          ...(params.motivoPerda !== undefined ? { motivoPerda: params.motivoPerda } : {}),
+          ...(params.observacoes !== undefined ? { observacoes: params.observacoes } : {}),
+        },
+      });
+      if (count === 0) {
+        throw new DomainError(
+          'O status do lead mudou durante a operação. Atualize a tela e tente novamente.',
+          AppErrorCode.CONFLICT
+        );
+      }
+
       await tx.interacao.create({
         data: {
           leadId: params.id,
@@ -83,15 +100,11 @@ export class LeadsRepository {
         },
       });
 
-      return tx.lead.update({
+      return tx.lead.findUniqueOrThrow({
         where: { id: params.id },
-        data: {
-          status: params.novoStatus,
-          ...(params.motivoPerda !== undefined ? { motivoPerda: params.motivoPerda } : {}),
-          ...(params.observacoes !== undefined ? { observacoes: params.observacoes } : {}),
-        },
         include: {
           regiao: true,
+          demo: true,
           interacoes: {
             where: { deletedAt: null },
             orderBy: { createdAt: 'desc' },
@@ -103,10 +116,26 @@ export class LeadsRepository {
 
   async recordWhatsappSent(params: {
     id: string;
+    statusAnterior: LeadStatus;
     proximoContatoEm: Date;
     mensagem: string;
   }) {
     return this.prisma.$transaction(async (tx) => {
+      // Escrita condicional: um lead descartado em paralelo nunca é sobrescrito para ENVIADO.
+      const { count } = await tx.lead.updateMany({
+        where: { id: params.id, status: params.statusAnterior, deletedAt: null },
+        data: {
+          status: 'ENVIADO',
+          proximoContatoEm: params.proximoContatoEm,
+        },
+      });
+      if (count === 0) {
+        throw new DomainError(
+          'O status do lead mudou durante a operação. Atualize a tela e tente novamente.',
+          AppErrorCode.CONFLICT
+        );
+      }
+
       await tx.interacao.create({
         data: {
           leadId: params.id,
@@ -115,14 +144,11 @@ export class LeadsRepository {
         },
       });
 
-      return tx.lead.update({
+      return tx.lead.findUniqueOrThrow({
         where: { id: params.id },
-        data: {
-          status: 'ENVIADO',
-          proximoContatoEm: params.proximoContatoEm,
-        },
         include: {
           regiao: true,
+          demo: true,
           interacoes: {
             where: { deletedAt: null },
             orderBy: { createdAt: 'desc' },

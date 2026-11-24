@@ -1,5 +1,5 @@
 import { AllowedTransitionsMap, assertTransition, canTransition } from './state-machine.js';
-import type { LeadStatus } from '../schemas/prospect.schema.js';
+import type { DemoTemplate, LeadStatus } from '../schemas/prospect.schema.js';
 
 const REDES = /instagram\.com|facebook\.com|linktr\.ee|wa\.me|ifood/i;
 
@@ -136,4 +136,72 @@ export function canTransitionLeadStatus(from: LeadStatus, to: LeadStatus): boole
 
 export function assertLeadStatusTransition(from: LeadStatus, to: LeadStatus): void {
   assertTransition(from, to, LEAD_ALLOWED_TRANSITIONS, 'Lead');
+}
+
+/**
+ * Gera um slug limpo e URL-safe para a página pública /demo/[slug].
+ */
+export function gerarSlugDemo(nome: string, sufixo?: string): string {
+  const base = nome
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60);
+
+  const fallback = base || 'negocio';
+  if (!sufixo) return fallback;
+
+  const sufixoLimpo = sufixo
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '')
+    .slice(0, 8);
+
+  return sufixoLimpo ? `${fallback}-${sufixoLimpo}` : fallback;
+}
+
+/**
+ * Mapeia o nicho do lead para um dos templates disponíveis na Fase 2.
+ */
+export function resolverTemplateDemo(nicho: string): DemoTemplate {
+  const normalizado = nicho
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+
+  if (/hamburgu|burguer|lanch|pizza|restaur|food|acai|padaria/.test(normalizado)) {
+    return 'hamburgueria';
+  }
+
+  return 'barbearia';
+}
+
+/**
+ * Retorna a paleta de cores padrão por nicho/template.
+ */
+export function obterPaletaPorTemplate(template: DemoTemplate): {
+  corPrimaria: string;
+  corDestaque: string;
+} {
+  if (template === 'hamburgueria') {
+    return {
+      corPrimaria: '#18181b',
+      corDestaque: '#ea580c',
+    };
+  }
+
+  return {
+    corPrimaria: '#111827',
+    corDestaque: '#d97706',
+  };
+}
+
+/**
+ * Monta a URL pública completa da demo a partir da base configurada e do slug.
+ */
+export function buildDemoUrl(baseUrl: string, slug: string): string {
+  const cleanBase = baseUrl.replace(/\/+$/, '');
+  const cleanSlug = slug.replace(/^\/+/, '');
+  return `${cleanBase}/demo/${cleanSlug}`;
 }

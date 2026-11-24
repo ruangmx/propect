@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   assertLeadStatusTransition,
+  buildDemoUrl,
   calcularProximoContato,
   canTransitionLeadStatus,
   classificar,
@@ -9,6 +10,9 @@ import {
   extrairInstagram,
   gerarLinkWhatsapp,
   gerarMensagemWhatsapp,
+  gerarSlugDemo,
+  obterPaletaPorTemplate,
+  resolverTemplateDemo,
   sanitizeHttpsUrl,
 } from './prospect.domain.js';
 
@@ -169,6 +173,26 @@ describe('Domínio Prospect — Classificação e Qualificação de Leads', () =
     it('bloqueia transição direta inválida como DESCARTADO -> FECHOU', () => {
       expect(canTransitionLeadStatus('DESCARTADO', 'FECHOU')).toBe(false);
       expect(() => assertLeadStatusTransition('DESCARTADO', 'FECHOU')).toThrow();
+    });
+  });
+
+  describe('Helpers de Demo (Fase 2)', () => {
+    it('gera slug normalizado sem acentos nem caracteres especiais', () => {
+      expect(gerarSlugDemo('Barbearia São José & Cia')).toBe('barbearia-sao-jose-cia');
+      expect(gerarSlugDemo('Águas Burger!', 'ab12')).toBe('aguas-burger-ab12');
+    });
+
+    it('resolve template por nicho e retorna paleta de cores', () => {
+      expect(resolverTemplateDemo('hamburgueria artesanal')).toBe('hamburgueria');
+      expect(resolverTemplateDemo('barbearia')).toBe('barbearia');
+      expect(obterPaletaPorTemplate('hamburgueria').corDestaque).toBe('#ea580c');
+      expect(obterPaletaPorTemplate('barbearia').corDestaque).toBe('#d97706');
+    });
+
+    it('monta URL pública da demo sem barras duplicadas', () => {
+      expect(buildDemoUrl('https://demos.4rtech.com.br/', '/barbearia-dom-pedro')).toBe(
+        'https://demos.4rtech.com.br/demo/barbearia-dom-pedro'
+      );
     });
   });
 });

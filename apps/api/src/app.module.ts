@@ -7,6 +7,7 @@ import { PrismaModule } from './common/prisma/prisma.module.js';
 import { EventsModule } from './events/events.module.js';
 import { HealthModule } from './health/health.module.js';
 import { BuscasModule } from './modules/buscas/buscas.module.js';
+import { DemosModule } from './modules/demos/demos.module.js';
 import { LeadsModule } from './modules/leads/leads.module.js';
 import { RegioesModule } from './modules/regioes/regioes.module.js';
 
@@ -25,6 +26,7 @@ import { RegioesModule } from './modules/regioes/regioes.module.js';
     RegioesModule,
     BuscasModule,
     LeadsModule,
+    DemosModule,
   ],
   providers: [
     {

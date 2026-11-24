@@ -12,6 +12,7 @@ import {
   MapPin,
   MessageCircle,
   Phone,
+  Sparkles,
   Star,
   Eye,
 } from 'lucide-react';
@@ -24,6 +25,8 @@ interface LeadCardProps {
   onSendWhatsapp: (leadId: string) => void;
   onChangeStatus: (leadId: string, status: LeadStatus) => void;
   onOpenDetails: (leadId: string) => void;
+  onGenerateDemo: (leadId: string) => void;
+  onPreviewDemo: (leadId: string) => void;
 }
 
 const PRESENCA_BADGE: Record<Lead['presencaWeb'], { label: string; variant: 'warning' | 'default' | 'success' }> = {
@@ -51,10 +54,13 @@ export function LeadCard({
   onSendWhatsapp,
   onChangeStatus,
   onOpenDetails,
+  onGenerateDemo,
+  onPreviewDemo,
 }: LeadCardProps) {
   const presenca = PRESENCA_BADGE[lead.presencaWeb];
   const proximosStatus = LEAD_ALLOWED_TRANSITIONS[lead.status] ?? [];
   const podeEnviarWhatsapp = Boolean(lead.telefone) && canTransitionLeadStatus(lead.status, 'ENVIADO');
+  const podeGerarDemo = !lead.demo && canTransitionLeadStatus(lead.status, 'DEMO_PRONTA');
   const mapsUrl = sanitizeHttpsUrl(lead.googleMapsUri);
 
   return (
@@ -91,6 +97,15 @@ export function LeadCard({
             {typeof lead.totalAvaliacoes === 'number' && (
               <span className="text-zinc-500">({lead.totalAvaliacoes})</span>
             )}
+          </span>
+        )}
+        {lead.demo && (
+          <span
+            className="inline-flex items-center gap-1 rounded-full bg-cyan-500/15 px-2 py-0.5 text-xs text-cyan-300"
+            title="Visualizações da demo"
+          >
+            <Eye className="h-3 w-3" />
+            {lead.demo.visualizacoes}
           </span>
         )}
       </div>
@@ -132,6 +147,32 @@ export function LeadCard({
           </a>
         )}
       </div>
+
+      {lead.demo ? (
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          disabled={isBusy}
+          onClick={() => onPreviewDemo(lead.id)}
+          className="w-full gap-1.5 border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/10"
+        >
+          <Eye className="h-3.5 w-3.5" />
+          Revisar demo
+        </Button>
+      ) : podeGerarDemo ? (
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          disabled={isBusy}
+          onClick={() => onGenerateDemo(lead.id)}
+          className="w-full gap-1.5 border-blue-500/40 text-blue-300 hover:bg-blue-500/10"
+        >
+          <Sparkles className="h-3.5 w-3.5" />
+          Gerar demo
+        </Button>
+      ) : null}
 
       {proximosStatus.length > 0 && (
         <div className="pt-1 border-t border-zinc-800/80">

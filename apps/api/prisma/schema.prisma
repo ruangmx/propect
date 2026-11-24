@@ -106,6 +106,7 @@ model Lead {
   updatedAt        DateTime    @updatedAt @map("updated_at") @db.Timestamptz
   deletedAt        DateTime?   @map("deleted_at") @db.Timestamptz
   interacoes       Interacao[]
+  demo             Demo?
 
   @@index([status])
   @@index([nicho])
@@ -132,4 +133,21 @@ model Interacao {
   @@index([createdAt])
   @@index([deletedAt])
   @@map("interacoes")
+}
+
+model Demo {
+  id            String    @id @default(uuid()) @db.Uuid
+  leadId        String    @unique @map("lead_id") @db.Uuid
+  lead          Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  template      String    @db.VarChar(50)
+  dados         Json
+  logoUrl       String?   @map("logo_url")
+  publicadaEm   DateTime? @map("publicada_em") @db.Timestamptz
+  visualizacoes Int       @default(0)
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt     DateTime? @map("deleted_at") @db.Timestamptz
+
+  @@index([deletedAt])
+  @@map("demos")
 }

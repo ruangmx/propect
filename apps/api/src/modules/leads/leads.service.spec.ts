@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { DomainError, LeadStatus, PresencaWeb } from '@prospect/shared';
+import { EnvService } from '../../common/env/env.service.js';
 import { EventsService } from '../../events/events.service.js';
 import { LeadsRepository } from './leads.repository.js';
 import { LeadsService } from './leads.service.js';
@@ -63,11 +64,15 @@ describe('LeadsService', () => {
       createInteraction: vi.fn(),
     } as unknown as LeadsRepository;
 
+    const envService = {
+      get: vi.fn().mockReturnValue('http://localhost:3000'),
+    } as unknown as EnvService;
+
     const eventsService = {
       publish: vi.fn(),
     } as unknown as EventsService;
 
-    const service = new LeadsService(repository, eventsService);
+    const service = new LeadsService(repository, envService, eventsService);
     return { service, repository, eventsService };
   }
 

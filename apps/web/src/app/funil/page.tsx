@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { LeadCard } from '@/components/prospect/lead-card';
 import { LeadDetailModal } from '@/components/prospect/lead-detail-modal';
+import { DemoPreviewModal } from '@/components/prospect/demo-preview-modal';
 import { useLeadsVm } from '@/hooks/use-leads-vm';
 
 export default function FunilPage() {
@@ -195,6 +196,8 @@ export default function FunilPage() {
                         onSendWhatsapp={(id) => void vm.enviarWhatsapp(id)}
                         onChangeStatus={(id, status) => void vm.mudarStatus(id, status)}
                         onOpenDetails={(id) => void vm.abrirDetalhes(id)}
+                        onGenerateDemo={(id) => void vm.gerarDemo(id)}
+                        onPreviewDemo={(id) => void vm.abrirPreviewDemo(id)}
                       />
                     ))
                   )}
@@ -215,6 +218,18 @@ export default function FunilPage() {
           onAddInteraction={(id, tipo, conteudo) =>
             void vm.registrarInteracao(id, tipo, conteudo)
           }
+        />
+      )}
+
+      {vm.previewLead && (
+        <DemoPreviewModal
+          lead={vm.previewLead}
+          isBusy={vm.busyLeadId === vm.previewLead.id || vm.isLoadingDetail}
+          errorMessage={vm.actionError}
+          onClose={vm.fecharPreviewDemo}
+          onSave={(demoId, leadId, input) => void vm.salvarEdicaoDemo(demoId, leadId, input)}
+          onRegenerate={(leadId, template) => void vm.gerarDemo(leadId, template)}
+          onSendWhatsapp={(id) => void vm.enviarWhatsapp(id)}
         />
       )}
     </div>

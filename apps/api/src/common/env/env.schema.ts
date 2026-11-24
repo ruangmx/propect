@@ -13,6 +13,9 @@ export const EnvSchema = z.object({
     .default('dev-insecure-jwt-secret-replace-in-production-min-32-chars'),
   CORS_ORIGIN: z.string().default('http://localhost:3000'),
   GOOGLE_PLACES_KEY: z.string().optional(),
+  ANTHROPIC_API_KEY: z.string().optional(),
+  ANTHROPIC_MODEL: z.string().default('claude-haiku-5-5'),
+  DEMO_BASE_URL: z.string().url().default('http://localhost:3000'),
 });
 
 export type EnvConfig = z.infer<typeof EnvSchema>;
