@@ -84,7 +84,7 @@ export default function BuscaPage() {
                   key={item}
                   type="button"
                   onClick={() => vm.setNicho(item)}
-                  className={`rounded-full border px-3.5 py-1.5 text-xs font-medium transition cursor-pointer ${
+                  className={`rounded-full border px-3.5 py-1.5 text-xs font-medium capitalize transition cursor-pointer ${
                     ativo
                       ? 'border-blue-500 bg-blue-500/20 text-blue-300'
                       : 'border-zinc-700 bg-zinc-900 text-zinc-300 hover:border-zinc-500'
